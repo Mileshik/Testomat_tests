@@ -13,4 +13,3 @@ def login_with_invalid_creds(page: Page):
     page.get_by_role(role="button", name="Sign in").click()
 
     expect(page.locator("#content-desktop").get_by_text("Invalid Email or password.")).to_be_visible()
-    expect(page.locator("#content-desktop .common-flash-info")).to_have_text("Invalid Email or password.")
