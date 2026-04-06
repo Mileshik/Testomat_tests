@@ -38,7 +38,7 @@ def test_search_project_in_company(page: Page):
 def test_should_be_possible_to_open_free_project(page: Page):
     #arrange
     page.goto("http://app.testomat.io/users/sign_in")
-    login_user(page, email="consuertelm@gmail.com", password="Reyna2017milenko")
+    login_user(page, email="consuertelm@gmail.com", password="*****")
     #act
     page.locator("#company_id").click()
     page.locator("#company_id").select_option("Free Projects")
