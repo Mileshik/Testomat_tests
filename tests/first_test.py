@@ -3,7 +3,6 @@ from playwright.sync_api import Page, expect
 
 def login_with_invalid_creds(page: Page):
     page.goto("https://testomat.io")
-
     expect(page.locator("[href*='sign_in'].login-item")).to_be_visible()
 
     page.get_by_text(text="Log in", exact=True).click()
@@ -13,3 +12,4 @@ def login_with_invalid_creds(page: Page):
     page.get_by_role(role="button", name="Sign in").click()
 
     expect(page.locator("#content-desktop").get_by_text("Invalid Email or password.")).to_be_visible()
+
