@@ -1,14 +1,8 @@
 import os
-from dotenv import load_dotenv
 
-from playwright.sync_api import sync_playwright, Page
 from playwright.sync_api import Page, expect
 
-load_dotenv()
 
-LOGIN_URL=f"{os.getenv('BASE_APP_URL')}/users/sign_in"
-EMAIL=os.getenv("EMAIL")
-PASSWORD=os.getenv("PASSWORD")
 def test_login_with_invalid_creds(page: Page):
     login_user(page=page, mail=EMAIL, password=PASSWORD)
 
@@ -54,7 +48,7 @@ def search_for_project(page: Page, target_project: str):
 
 def test_should_be_possible_to_open_free_project(page: Page):
     # arrenge
-    page.goto(LOGIN_URL,timeout=6000)
+    page.goto(LOGIN_URL, timeout=6000)
     login_user(page=page, mail=EMAIL, password=PASSWORD)
     # act
     page.locator("#company_id").click()
@@ -72,9 +66,7 @@ def open_home_page(page: Page):
     page.goto(os.getenv("BASE_URL"))
 
 
-
 def login_user(page, mail, password):
-
     email_input = page.locator("input[name='user[email]']:visible")
     password_input = page.locator("input[name='user[password]']:visible")
     sign_in_button = page.locator("input[value='Sign In']:visible")
@@ -86,13 +78,12 @@ def login_user(page, mail, password):
 
     sign_in_button.click()
 
+    # email.fill(mail)
+    # password_input.fill(password)
 
-    #email.fill(mail)
-    #password_input.fill(password)
+    # password_input.press("Tab")
 
-    #password_input.press("Tab")
+    # expect(button).to_be_visible()
+    # expect(button).to_be_enabled()
 
-    #expect(button).to_be_visible()
-    #expect(button).to_be_enabled()
-
-    #button.click()
+    # button.click()
