@@ -1,18 +1,30 @@
 import os
 
+import pytest
 from playwright.sync_api import Page, expect
 
+from tests.conftest import Config
 
-def test_login_with_invalid_creds(page: Page):
-    login_user(page=page, mail=EMAIL, password=PASSWORD)
+@pytest.fixture(scope="function")
+def login(page: Page, configs: Config):page.goto(configs.login_url, timeout=60000)
+    login_user(page=page, mail=configs.email, password=configs.password)
 
-    page.goto("https://testomat.io")
+    TARGET_PROJECT  = "MyProjectTaras"
+
+def test_login_with_invalid_creds(page: Page, configs):
+    #login_user(page=page, mail=EMAIL, password=PASSWORD)
+
+    open_home_page(page)
     expect(page.locator("[href*='sign_in'].login-item")).to_be_visible()
 
     page.get_by_text(text="Log in", exact=True).click()
     # page.get_by_role("textbox", name="name@email.com")
 
-    login_user(page=page, mail="consuertelm@gmail.com", password="Reyna2017milenko")
+    from faker import Faker
+
+    invalid_password = Faker().password(length=10)
+
+    login_user(page=page, mail=configs.email, password=invalid_password)
     page.locator("#content-desktop #user_email").fill("consuertelm@gmail.com")
     page.locator("#content-desktop #user_password").fill("Reyna2017milenko")
     page.get_by_role(role="button", name="Sign in").click()
@@ -20,9 +32,12 @@ def test_login_with_invalid_creds(page: Page):
     expect(page.locator("#content-desktop").get_by_text("Invalid Email or password.")).to_be_visible()
     expect(page.locator("#content-desktop").get_by_text("Invalid Email or password.")).to_be_visible()
 
+   # LOGIN_URL = os.getenv("LOGIN_URL")
 
-def test_search_project_in_company(page: Page):
-    page.goto(LOGIN_URL, timeout=60000)
+
+def test_search_project_in_company(page: Page, configs: Config):
+    page.goto(configs.login_url, timeout=60000)
+    login_user(page=page, mail=configs.email, password=configs.password)
 
     # page.get_by_text("Log in", exact=True).click()
 
@@ -30,14 +45,13 @@ def test_search_project_in_company(page: Page):
     # page.locator("#content-desktop #user_password").fill("ktkckyl")
     # page.get_by_role(role="button", name="Sign in").click()
 
-    login_user(page=page, mail=EMAIL, password=PASSWORD)
     print(page.url)
-    target_project = "MyProjectTaras"
-    search_for_project(page=page, target_project=target_project)
+
+    search_for_project(page=page, target_project=TARGET_PROJECT)
     # expect(page.get_by_role("searchbox", name="Search")).to_be_visible()
     # page.locator("#content-desktop #search").fill(target_project)
 
-    expect(page.get_by_role("heading", name=target_project)).to_be_visible()
+    expect(page.get_by_role("heading", name=TARGET_PROJECT)).to_be_visible()
     # expect(page.locator("ul li h3").filter(has_text=target_project)).to_have_text(target_project)
 
 
@@ -46,18 +60,18 @@ def search_for_project(page: Page, target_project: str):
     page.locator("#content-desktop #search").fill(target_project)
 
 
-def test_should_be_possible_to_open_free_project(page: Page):
+def test_should_be_possible_to_open_free_project(page: Page, configs: Config):
     # arrenge
-    page.goto(LOGIN_URL, timeout=6000)
-    login_user(page=page, mail=EMAIL, password=PASSWORD)
+    page.goto(configs.login_url, timeout=6000)
+    login_user(page,configs.email , configs.password)
     # act
     page.locator("#company_id").click()
     page.locator("#company_id").select_option("Free Projects")
 
     # assert
-    target_project = "MyProjectTaras"
-    search_for_project(page=page, target_project=target_project)
-    expect(page.get_by_role("heading", name=target_project)).to_be_hidden()
+
+    search_for_project(page=page, target_project=TARGET_PROJECT)
+    expect(page.get_by_role("heading", name=TARGET_PROJECT)).to_be_hidden()
 
     expect(page.get_by_text("You have not created any projects yet")).to_be_visible(timeout=10000)
 
